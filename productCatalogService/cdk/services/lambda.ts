@@ -26,7 +26,7 @@ function validateProduct(product: Partial<Product>): string | null {
     return null;
 }
 
-export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
     console.log('Received event:', JSON.stringify(event, null, 2));
 
     try {
@@ -114,6 +114,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
         };
     }
 }
+export { handler };
 // This code is a Lambda function handler for managing products in a DynamoDB table.
 // It supports CRUD operations: Create, Read, Update, and Delete.
 // The handler processes HTTP requests and interacts with DynamoDB using the AWS SDK.

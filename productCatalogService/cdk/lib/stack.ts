@@ -14,17 +14,23 @@ export class CdkStack extends cdk.Stack {
       partitionKey: { name: "productId", type: dynamoDB.AttributeType.STRING },
       billingMode: dynamoDB.BillingMode.PAY_PER_REQUEST,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
-      pointInTimeRecovery: true,
+      pointInTimeRecoverySpecification: {
+          pointInTimeRecoveryEnabled: true
+      },
       timeToLiveAttribute: 'ttl'
     });
 
     // Lambda Function
     const productLambda = new lambdaNodejs.NodejsFunction(this, 'ProductLambda', {
-      entry: path.join(__dirname, '../../lambda/productHandler.ts'),
+      entry: path.join(__dirname, '../services/lambda.ts'), // Adjust the path to your lambda file
+      functionName: 'ProductLambda',
       handler: 'handler',
       runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
       environment: {
         TABLE_NAME: table.tableName
+      },
+      bundling: {
+        platform: 'linux/arm64'
       }
     });
 
