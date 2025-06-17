@@ -2,14 +2,14 @@
 
 set -e
 
-REGION= ${AWS_REGION}
+REGION=${AWS_REGION}
 
 if [ -z "$REGION" ]; then
   echo "AWS_REGION is not set. Exiting."
   exit 1
 fi
 
-STACK_NAME= ${STACK_NAME}
+STACK_NAME=${STACK_NAME}
 status=$(aws cloudformation describe-stacks --stack-name "$STACK_NAME" --region "$AWS_REGION" \
             --query "Stacks[0].StackStatus" --output text 2>/dev/null || echo "NOT_FOUND")
 
