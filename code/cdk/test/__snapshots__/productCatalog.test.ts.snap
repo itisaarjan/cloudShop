@@ -1,0 +1,915 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Snapshot testing to detect sudden infra changes Snapshot test 1`] = `
+{
+  "Conditions": {
+    "productCatalogTableStackRegionNotEqualsuswest1F82DADEE": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            "us-west-1",
+            {
+              "Ref": "AWS::Region",
+            },
+          ],
+        },
+      ],
+    },
+    "productCatalogTableStackRegionNotEqualsuswest2F5F48711": {
+      "Fn::Not": [
+        {
+          "Fn::Equals": [
+            "us-west-2",
+            {
+              "Ref": "AWS::Region",
+            },
+          ],
+        },
+      ],
+    },
+  },
+  "Parameters": {
+    "BootstrapVersion": {
+      "Default": "/cdk-bootstrap/hnb659fds/version",
+      "Description": "Version of the CDK Bootstrap resources in this environment, automatically retrieved from SSM Parameter Store. [cdk:skip]",
+      "Type": "AWS::SSM::Parameter::Value<String>",
+    },
+  },
+  "Resources": {
+    "awscdkawsdynamodbReplicaProviderNestedStackawscdkawsdynamodbReplicaProviderNestedStackResource18E3F12D": {
+      "DeletionPolicy": "Delete",
+      "Properties": {
+        "Parameters": {
+          "referencetoProductCatalogTestproductCatalogTableB1517EA5Ref": {
+            "Ref": "productCatalogTable910C8E36",
+          },
+        },
+        "TemplateURL": {
+          "Fn::Join": [
+            "",
+            [
+              "https://s3.",
+              {
+                "Ref": "AWS::Region",
+              },
+              ".",
+              {
+                "Ref": "AWS::URLSuffix",
+              },
+              "/",
+              {
+                "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+              },
+              "/0f61ab6344bb42b689ade3486f65ca0838f3f0d9bdf11cf8e8ff9eaa1a5b919f.json",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::CloudFormation::Stack",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "lambdaDeleteProduct62D4A3CA": {
+      "DependsOn": [
+        "lambdaDeleteProductServiceRoleDefaultPolicyEF414FAD",
+        "lambdaDeleteProductServiceRoleD08376CB",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "86fbd58fc898fa353ef0dc05ad53b2b6ec8772bb69466f9411666f5160f29b33.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "table_name": {
+              "Ref": "productCatalogTable910C8E36",
+            },
+          },
+        },
+        "FunctionName": "lambdaDeleteProduct",
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "lambdaDeleteProductServiceRoleD08376CB",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "lambdaDeleteProductServiceRoleD08376CB": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "lambdaDeleteProductServiceRoleDefaultPolicyEF414FAD": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "productCatalogTable910C8E36",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":dynamodb:us-west-1:",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/",
+                      {
+                        "Ref": "productCatalogTable910C8E36",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":dynamodb:us-west-2:",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/",
+                      {
+                        "Ref": "productCatalogTable910C8E36",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "lambdaDeleteProductServiceRoleDefaultPolicyEF414FAD",
+        "Roles": [
+          {
+            "Ref": "lambdaDeleteProductServiceRoleD08376CB",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "lambdaGetProduct4AF93531": {
+      "DependsOn": [
+        "lambdaGetProductServiceRoleDefaultPolicyC8E1DE32",
+        "lambdaGetProductServiceRoleCB3852A4",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "2574445a0ad436cf47f2b2987c9e295a9a50281daef6c269c1897dcba4ec846d.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "table_name": {
+              "Ref": "productCatalogTable910C8E36",
+            },
+          },
+        },
+        "FunctionName": "lambdaGetProduct",
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "lambdaGetProductServiceRoleCB3852A4",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "lambdaGetProductServiceRoleCB3852A4": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "lambdaGetProductServiceRoleDefaultPolicyC8E1DE32": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "productCatalogTable910C8E36",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":dynamodb:us-west-1:",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/",
+                      {
+                        "Ref": "productCatalogTable910C8E36",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":dynamodb:us-west-2:",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/",
+                      {
+                        "Ref": "productCatalogTable910C8E36",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "lambdaGetProductServiceRoleDefaultPolicyC8E1DE32",
+        "Roles": [
+          {
+            "Ref": "lambdaGetProductServiceRoleCB3852A4",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "lambdaPostProductE8872313": {
+      "DependsOn": [
+        "lambdaPostProductServiceRoleDefaultPolicy2179AD7B",
+        "lambdaPostProductServiceRole2CBA2639",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "25efe2589d7b2fa36f9cd3a1096649f828af02b92f5d2e9e8906f2673ee549bb.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "table_name": {
+              "Ref": "productCatalogTable910C8E36",
+            },
+          },
+        },
+        "FunctionName": "lambdaPostProudct",
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "lambdaPostProductServiceRole2CBA2639",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "lambdaPostProductServiceRole2CBA2639": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "lambdaPostProductServiceRoleDefaultPolicy2179AD7B": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "productCatalogTable910C8E36",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":dynamodb:us-west-1:",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/",
+                      {
+                        "Ref": "productCatalogTable910C8E36",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":dynamodb:us-west-2:",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/",
+                      {
+                        "Ref": "productCatalogTable910C8E36",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "lambdaPostProductServiceRoleDefaultPolicy2179AD7B",
+        "Roles": [
+          {
+            "Ref": "lambdaPostProductServiceRole2CBA2639",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "lambdaUpdateProductB1BC3561": {
+      "DependsOn": [
+        "lambdaUpdateProductServiceRoleDefaultPolicy6230322B",
+        "lambdaUpdateProductServiceRole8F8F185A",
+      ],
+      "Properties": {
+        "Code": {
+          "S3Bucket": {
+            "Fn::Sub": "cdk-hnb659fds-assets-\${AWS::AccountId}-\${AWS::Region}",
+          },
+          "S3Key": "31415d359614ee5e1a30bdb22a31061ba933c2a0f36a157adf19ea163d26a935.zip",
+        },
+        "Environment": {
+          "Variables": {
+            "table_name": {
+              "Ref": "productCatalogTable910C8E36",
+            },
+          },
+        },
+        "FunctionName": "lambdaUpdateProduct",
+        "Handler": "index.handler",
+        "Role": {
+          "Fn::GetAtt": [
+            "lambdaUpdateProductServiceRole8F8F185A",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs18.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "lambdaUpdateProductServiceRole8F8F185A": {
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [
+            {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": [
+          {
+            "Fn::Join": [
+              "",
+              [
+                "arn:",
+                {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "lambdaUpdateProductServiceRoleDefaultPolicy6230322B": {
+      "Properties": {
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:GetRecords",
+                "dynamodb:GetShardIterator",
+                "dynamodb:Query",
+                "dynamodb:GetItem",
+                "dynamodb:Scan",
+                "dynamodb:ConditionCheckItem",
+                "dynamodb:BatchWriteItem",
+                "dynamodb:PutItem",
+                "dynamodb:UpdateItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+              ],
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "productCatalogTable910C8E36",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":dynamodb:us-west-1:",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/",
+                      {
+                        "Ref": "productCatalogTable910C8E36",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":dynamodb:us-west-2:",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/",
+                      {
+                        "Ref": "productCatalogTable910C8E36",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "lambdaUpdateProductServiceRoleDefaultPolicy6230322B",
+        "Roles": [
+          {
+            "Ref": "lambdaUpdateProductServiceRole8F8F185A",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "productCatalogTable910C8E36": {
+      "DeletionPolicy": "Retain",
+      "Properties": {
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "id",
+            "AttributeType": "S",
+          },
+          {
+            "AttributeName": "name",
+            "AttributeType": "S",
+          },
+        ],
+        "BillingMode": "PAY_PER_REQUEST",
+        "KeySchema": [
+          {
+            "AttributeName": "id",
+            "KeyType": "HASH",
+          },
+          {
+            "AttributeName": "name",
+            "KeyType": "RANGE",
+          },
+        ],
+        "PointInTimeRecoverySpecification": {
+          "PointInTimeRecoveryEnabled": true,
+        },
+        "StreamSpecification": {
+          "StreamViewType": "NEW_AND_OLD_IMAGES",
+        },
+        "TableName": "productCatalogTable",
+      },
+      "Type": "AWS::DynamoDB::Table",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "productCatalogTableReplicauswest18430B910": {
+      "Condition": "productCatalogTableStackRegionNotEqualsuswest1F82DADEE",
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "productCatalogTableSourceTableAttachedManagedPolicyProductCatalogTestawscdkawsdynamodbReplicaProviderIsCompleteHandlerServiceRoleC26D9E60A592FF1F",
+        "productCatalogTableSourceTableAttachedManagedPolicyProductCatalogTestawscdkawsdynamodbReplicaProviderOnEventHandlerServiceRole5CA0DF4E41FACC74",
+      ],
+      "Properties": {
+        "Region": "us-west-1",
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "awscdkawsdynamodbReplicaProviderNestedStackawscdkawsdynamodbReplicaProviderNestedStackResource18E3F12D",
+            "Outputs.ProductCatalogTestawscdkawsdynamodbReplicaProviderframeworkonEvent4F2FF11DArn",
+          ],
+        },
+        "TableName": {
+          "Ref": "productCatalogTable910C8E36",
+        },
+      },
+      "Type": "Custom::DynamoDBReplica",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "productCatalogTableReplicauswest23DA2D40D": {
+      "Condition": "productCatalogTableStackRegionNotEqualsuswest2F5F48711",
+      "DeletionPolicy": "Delete",
+      "DependsOn": [
+        "productCatalogTableSourceTableAttachedManagedPolicyProductCatalogTestawscdkawsdynamodbReplicaProviderIsCompleteHandlerServiceRoleC26D9E60A592FF1F",
+        "productCatalogTableSourceTableAttachedManagedPolicyProductCatalogTestawscdkawsdynamodbReplicaProviderOnEventHandlerServiceRole5CA0DF4E41FACC74",
+      ],
+      "Metadata": {
+        "DynamoDbReplicationDependency": {
+          "Fn::If": [
+            "productCatalogTableStackRegionNotEqualsuswest1F82DADEE",
+            {
+              "Ref": "productCatalogTableReplicauswest18430B910",
+            },
+            {
+              "Ref": "AWS::NoValue",
+            },
+          ],
+        },
+      },
+      "Properties": {
+        "Region": "us-west-2",
+        "ServiceToken": {
+          "Fn::GetAtt": [
+            "awscdkawsdynamodbReplicaProviderNestedStackawscdkawsdynamodbReplicaProviderNestedStackResource18E3F12D",
+            "Outputs.ProductCatalogTestawscdkawsdynamodbReplicaProviderframeworkonEvent4F2FF11DArn",
+          ],
+        },
+        "TableName": {
+          "Ref": "productCatalogTable910C8E36",
+        },
+      },
+      "Type": "Custom::DynamoDBReplica",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "productCatalogTableSourceTableAttachedManagedPolicyProductCatalogTestawscdkawsdynamodbReplicaProviderIsCompleteHandlerServiceRoleC26D9E60A592FF1F": {
+      "Properties": {
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "DynamoDB replication managed policy for table ",
+              {
+                "Ref": "productCatalogTable910C8E36",
+              },
+            ],
+          ],
+        },
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "dynamodb:DescribeTable",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "productCatalogTable910C8E36",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": [
+          {
+            "Fn::GetAtt": [
+              "awscdkawsdynamodbReplicaProviderNestedStackawscdkawsdynamodbReplicaProviderNestedStackResource18E3F12D",
+              "Outputs.ProductCatalogTestawscdkawsdynamodbReplicaProviderIsCompleteHandlerServiceRole2520239BRef",
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+    "productCatalogTableSourceTableAttachedManagedPolicyProductCatalogTestawscdkawsdynamodbReplicaProviderOnEventHandlerServiceRole5CA0DF4E41FACC74": {
+      "Properties": {
+        "Description": {
+          "Fn::Join": [
+            "",
+            [
+              "DynamoDB replication managed policy for table ",
+              {
+                "Ref": "productCatalogTable910C8E36",
+              },
+            ],
+          ],
+        },
+        "Path": "/",
+        "PolicyDocument": {
+          "Statement": [
+            {
+              "Action": "dynamodb:*",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::GetAtt": [
+                    "productCatalogTable910C8E36",
+                    "Arn",
+                  ],
+                },
+                {
+                  "Ref": "AWS::NoValue",
+                },
+              ],
+            },
+            {
+              "Action": "dynamodb:*",
+              "Effect": "Allow",
+              "Resource": [
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":dynamodb:us-west-1:",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/",
+                      {
+                        "Ref": "productCatalogTable910C8E36",
+                      },
+                    ],
+                  ],
+                },
+                {
+                  "Fn::Join": [
+                    "",
+                    [
+                      "arn:",
+                      {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":dynamodb:us-west-2:",
+                      {
+                        "Ref": "AWS::AccountId",
+                      },
+                      ":table/",
+                      {
+                        "Ref": "productCatalogTable910C8E36",
+                      },
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "Roles": [
+          {
+            "Fn::GetAtt": [
+              "awscdkawsdynamodbReplicaProviderNestedStackawscdkawsdynamodbReplicaProviderNestedStackResource18E3F12D",
+              "Outputs.ProductCatalogTestawscdkawsdynamodbReplicaProviderOnEventHandlerServiceRoleA969C0AARef",
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::ManagedPolicy",
+    },
+  },
+  "Rules": {
+    "CheckBootstrapVersion": {
+      "Assertions": [
+        {
+          "Assert": {
+            "Fn::Not": [
+              {
+                "Fn::Contains": [
+                  [
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                  ],
+                  {
+                    "Ref": "BootstrapVersion",
+                  },
+                ],
+              },
+            ],
+          },
+          "AssertDescription": "CDK bootstrap stack version 6 required. Please run 'cdk bootstrap' with a recent version of the CDK CLI.",
+        },
+      ],
+    },
+  },
+}
+`;
