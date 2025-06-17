@@ -19,7 +19,9 @@ jobs:
                 node-version: '18'
             
             - name: Install Dependencies
-              run: 
+              run: |
+                cd code
+                cd cdk
                 npm install
             
             - name: Build CDK
