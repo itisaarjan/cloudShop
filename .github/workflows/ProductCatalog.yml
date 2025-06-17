@@ -39,7 +39,7 @@ jobs:
             
             - name: Bootstrap CDK Stack
               run: 
-                ../scripts/CDKbootstrap.sh
+                ./.github/scripts/CDKbootstrap.sh
             
             - name: Deploy CDK Stack
               env: 
