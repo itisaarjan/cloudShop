@@ -18,6 +18,7 @@ if ! aws cloudformation describe-stacks \
 
   echo "CDKToolkit not found. Running bootstrap..."
   ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+  cd ./code/cdk
   npx cdk bootstrap aws://$ACCOUNT_ID/$REGION
 else
   echo "CDKToolkit already exists in $REGION. Skipping bootstrap."
