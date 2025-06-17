@@ -43,6 +43,12 @@ jobs:
               run: 
                 ./.github/scripts/CDKbootstrap.sh
             
+            - name: Check and delete stack if in ROLLBACK_COMPLETE
+              run: |
+                ./.github/scripts/CDKDeploy.sh
+              env:
+                AWS_REGION: ${{ secrets.AWS_REGION }}
+                STACK_NAME: "ProductCatalog"
             - name: Deploy CDK Stack
               env: 
                 AWS_REGION: ${{ secrets.AWS_REGION }}
