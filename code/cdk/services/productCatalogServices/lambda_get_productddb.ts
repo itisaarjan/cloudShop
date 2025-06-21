@@ -1,47 +1,60 @@
 import { DynamoDBClient, GetItemCommand } from "@aws-sdk/client-dynamodb";
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
+import { z } from "zod/v4";
 
+const client = new DynamoDBClient({});
+const tableName = process.env.table_name;
 
-const client=new DynamoDBClient({});
-const tableName=process.env.table_name;
+const querySchema = z.object({
+  id: z.string().min(1, "id is required"),     
+  name: z.string().min(1, "name is required") 
+});
 
+export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
+  try {
+    
+    const query = querySchema.parse(event.queryStringParameters ?? {});
 
-async function handler(event:APIGatewayProxyEvent): Promise<APIGatewayProxyResult>{
-   const id = event.queryStringParameters?.id;
-   const name = event.queryStringParameters?.name;
+    const command = new GetItemCommand({
+      TableName: tableName,
+      Key: {
+        id: { S: query.id },
+        name: { S: query.name }
+      },
+      ConsistentRead: true
+    });
 
+    const result = await client.send(command);
 
-   if(!id || !name){
-       return {
-           statusCode: 480,
-           body: "Both id and name are required"
-       }
-   };
+    if (!result.Item) {
+      return {
+        statusCode: 404,
+        body: JSON.stringify({ message: "Product not found" })
+      };
+    }
 
+    return {
+      statusCode: 200,
+      body: JSON.stringify(result.Item)
+    };
 
-   const command= new GetItemCommand({
-       TableName: tableName,
-       Key:{
-           id: {S: id},
-           name: {S: name}
-       },
-       ConsistentRead:true
-   });
+  } catch (error) {
+    if (error instanceof z.ZodError || error instanceof Error) {
+      return {
+        statusCode: 400,
+        body: JSON.stringify({
+          message: "Invalid query parameters",
+          errors: error instanceof z.ZodError ? error.issues : error.message
+        })
+      };
+    }
 
-
-   try{
-       const result = await client.send(command);
-       return {
-           statusCode: 200,
-           body: JSON.stringify(result.Item)
-       }
-   }catch(error){
-       return {
-           statusCode: 500,
-           body: JSON.stringify(error)
-       }
-   }
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: "Internal Server Error",
+        error: String(error)
+      })
+    };
+  }
 }
-
-
-export {handler};

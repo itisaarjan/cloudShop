@@ -1,21 +1,12 @@
-import { DynamoDBClient, UpdateItemCommand } from "@aws-sdk/client-dynamodb";
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
-import { z } from "zod/v4";
+import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { DynamoDBClient, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
+import { z } from 'zod/v4';
+import { productSchema, Product } from './lambda_post_productddb';
 
 const client = new DynamoDBClient({});
 const tableName = process.env.table_name;
 
-export const zodProduct = z.object({
-  id: z.string(),
-  name: z.string(),
-  description: z.string(),
-  price: z.number().min(0),
-  stock: z.number().min(0),
-  category: z.string(),
-  imageUrl: z.string()
-});
 
-export type Product = z.infer<typeof zodProduct>;
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   if (!event.body) {
@@ -27,7 +18,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
   try {
     const body = JSON.parse(event.body);
-    const product: Product = zodProduct.parse(body);
+    const product: Product = productSchema.parse(body);
 
     const command = new UpdateItemCommand({
       TableName: tableName,
@@ -72,22 +63,22 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     };
 
   } catch (error) {
-    if (error instanceof z.ZodError) {
+    if (error instanceof z.ZodError || error instanceof Error) {
       return {
         statusCode: 400,
         body: JSON.stringify({
-          message: "Zod Validation failure",
-          errors: error.issues
-        })
-      };
-    } else {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({
-          message: "Error on the DB side",
-          error: String(error)
+          message: "Invalid request body",
+          errors: error instanceof z.ZodError ? error.issues : error.message
         })
       };
     }
+
+    return {
+      statusCode: 500,
+      body: JSON.stringify({
+        message: "Internal Server Error",
+        error: String(error)
+      })
+    };
   }
 }
