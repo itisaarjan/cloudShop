@@ -11,6 +11,7 @@ interface Product{
     price: number;
     stock: number;
     category: string;
+    imageUrl: string
 }
 
 function validateAllProps(product: Product): boolean {
@@ -40,7 +41,8 @@ export async function handler(event:APIGatewayProxyEvent):Promise<APIGatewayProx
     description: { S: product.description },
     price: { N: product.price.toString() },
     stock: { N: product.stock.toString() }, 
-    category: { S: product.category }       
+    category: { S: product.category },
+    imageUrl: {S:product.imageUrl}       
   }
 });
 
