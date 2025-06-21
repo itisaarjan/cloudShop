@@ -43,7 +43,7 @@ export class ProductCatalogStack extends cdk.Stack {
     functionName: "lambdaGetAllProducts",
     runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
     handler: 'handler',
-    entry: path.join(__dirname,"..","..","services","productCatalogServices",'lambda_get_all_productddb'),
+    entry: path.join(__dirname,"..","..","services","productCatalogServices",'lambda_get_all_productddb.ts'),
     environment :{
       table_name: table.tableName
     }
