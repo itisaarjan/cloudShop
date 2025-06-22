@@ -27,15 +27,13 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
         name: {S: product.name}
       },
       UpdateExpression: `
-        SET #name = :name,
-            #description = :description,
+        SET #description = :description,
             #price = :price,
             #stock = :stock,
             #category = :category,
             #imageUrl = :imageUrl
       `,
       ExpressionAttributeNames: {
-        "#name": "name",
         "#description": "description",
         "#price": "price",
         "#stock": "stock",
@@ -43,7 +41,6 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
         "#imageUrl": "imageUrl"
       },
       ExpressionAttributeValues: {
-        ":name": { S: product.name },
         ":description": { S: product.description },
         ":price": { N: product.price.toString() },
         ":stock": { N: product.stock.toString() },
