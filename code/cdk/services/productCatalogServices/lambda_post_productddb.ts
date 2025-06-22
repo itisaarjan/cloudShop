@@ -1,5 +1,5 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { DynamoDBClient, PutItemCommand } from '@aws-sdk/client-dynamodb';
+import { DynamoDBClient, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { z } from 'zod/v4';
 
 const client = new DynamoDBClient({});
@@ -28,6 +28,27 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
   try {
     const body = JSON.parse(event.body);
     const product: Product = productSchema.parse(body);
+
+    const getCommand = new GetItemCommand({
+            TableName: tableName,
+            Key: {
+                id: {S:product.id},
+                name: {S:product.name}
+            }
+        })
+    
+        const getResult = await client.send(getCommand);
+    
+        if (!getResult.Item) {
+          return {
+            statusCode: 404,
+            body: JSON.stringify({
+              message: "Product not found",
+              id: product.id,
+              name: product.name
+            })
+          };
+        }
 
     const command = new PutItemCommand({
       TableName: tableName,

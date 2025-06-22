@@ -66,5 +66,6 @@ export class PaymentStack extends  cdk.Stack{
             replicationRegions:["us-west-1"]
         });
 
+        this.walletQueue = new 
     }
 }
