@@ -6,7 +6,7 @@ const client = new DynamoDBClient({});
 const tableName = process.env.table_name;
 
 const querySchema = z.object({
-  id: z.string().min(1, "Product ID is required")
+  id: z.string().min(1, "Product ID is required"),
 });
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
@@ -16,7 +16,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const command = new DeleteItemCommand({
       TableName: tableName,
       Key: {
-        id: { S: query.id }
+        id: { S: query.id },
       }
     });
 

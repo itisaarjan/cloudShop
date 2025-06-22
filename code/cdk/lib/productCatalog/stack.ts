@@ -97,7 +97,7 @@ export class ProductCatalogStack extends cdk.Stack {
    products.addMethod('Get', new integrations.LambdaIntegration(lambdaGetAllProducts));
    productName.addMethod('POST', new integrations.LambdaIntegration(lambdaPostProduct));
    productName.addMethod('PUT', new integrations.LambdaIntegration(lambdaUpdateProduct));
-   products.addMethod('DELETE', new integrations.LambdaIntegration(lambdaDeleteProduct));
+   productId.addMethod('DELETE', new integrations.LambdaIntegration(lambdaDeleteProduct));
    
  }
 }
