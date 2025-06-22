@@ -7,6 +7,7 @@ const tableName = process.env.table_name;
 
 const querySchema = z.object({
   id: z.string().min(1, "Product ID is required"),
+  name: z.string().min(1, "Product Name is required")
 });
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
@@ -17,6 +18,7 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
       TableName: tableName,
       Key: {
         id: { S: query.id },
+        name: {S: query.name}
       }
     });
 
