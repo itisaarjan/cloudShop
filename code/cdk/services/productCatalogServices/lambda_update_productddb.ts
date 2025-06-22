@@ -23,7 +23,8 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const command = new UpdateItemCommand({
       TableName: tableName,
       Key: {
-        id: { S: product.id }
+        id: { S: product.id },
+        name: {S: product.name}
       },
       UpdateExpression: `
         SET #name = :name,
