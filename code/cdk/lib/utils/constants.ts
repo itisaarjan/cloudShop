@@ -1,0 +1,1 @@
+export const productCatalogtable: string= 'productCatalogTable';

@@ -5,6 +5,8 @@ import * as lambda from "aws-cdk-lib/aws-lambda-nodejs";
 import * as apigateway from "aws-cdk-lib/aws-apigateway";
 import * as integrations from "aws-cdk-lib/aws-apigateway";
 import path from 'path';
+import { productCatalogtable } from '../utils/constants';
+
 
 export class ProductCatalogStack extends cdk.Stack {
  constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -12,7 +14,7 @@ export class ProductCatalogStack extends cdk.Stack {
 
 
    const table = new dynamodb.Table(this,"productCatalogTable",{
-     tableName: 'productCatalogTable',
+     tableName: productCatalogtable,
      partitionKey: {
        name: 'id',
        type: dynamodb.AttributeType.STRING
@@ -96,6 +98,7 @@ export class ProductCatalogStack extends cdk.Stack {
    products.addMethod('POST', new integrations.LambdaIntegration(lambdaPostProduct));
    products.addMethod('PUT', new integrations.LambdaIntegration(lambdaUpdateProduct));
    products.addMethod('DELETE', new integrations.LambdaIntegration(lambdaDeleteProduct));
+   
  }
 }
 
