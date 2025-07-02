@@ -1,6 +1,7 @@
 import { DynamoDBClient, PutItemCommand} from "@aws-sdk/client-dynamodb";
 import { SQSEvent } from "aws-lambda";
 import {z} from "zod/v4";
+import { productSchema } from "../productCatalogServices/lambda_post_productddb";
 
 const tableName = process.env.tableName;
 const client = new DynamoDBClient({});
@@ -10,7 +11,10 @@ const schema = z.object({
     customerId: z.string().min(1, "customerId not found"),
     email: z.string().min(1, "Customer email is missing"),
     sessionId: z.string().min(1,"sessionId is required"),
-})
+    Items: z.array(productSchema)
+});
+
+
 
 type Payload = z.infer<typeof schema>;
 
@@ -38,7 +42,13 @@ async function handler(event:SQSEvent){
                     S:payload.sessionId
                 },
                 Items:{
-                    L: payload.Items.map(id => ({ S: id }))
+                    L: payload.Items.map(product => ({
+                        M: {
+                          productId: { S: product.id },
+                          quantity: { N: product.stock.toString() },
+                          price: { N: product.price.toString() }
+                        }
+                      }))
                 }
             },
             ConditionExpression: 'attribute_not_exists(orderId)'
