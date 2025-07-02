@@ -1,0 +1,49 @@
+name: CDK deploy workflow
+# This is a basic workflow to help you get started with Actions
+# You can use this workflow to deploy your CDK application
+on:
+    push:
+        branches:
+            - main
+
+jobs: 
+    deploy:
+        runs-on: ubuntu-latest
+        steps: 
+            - name: Checkout Source
+              uses: actions/checkout@v2
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v2
+              with:
+                node-version: '18'
+            
+            - name: Install Dependencies
+              run: |
+                cd code
+                cd cdk
+                npm install
+            
+            - name: Build CDK
+              run: |
+                cd code
+                cd cdk
+                npm run build
+            
+            - name: Configure AWS Credentials via OIDC
+              uses: aws-actions/configure-aws-credentials@v2
+              with:
+                role-to-assume: arn:aws:iam::985539769349:role/GitHubActionsOIDCDeployRole
+                region: ${{secrets.AWS_REGION}}
+                        
+            - name: Deploy CDK Stack
+              env: 
+                AWS_REGION: ${{ secrets.AWS_REGION }}
+              run: |
+                cd code/cdk
+                npx cdk deploy --all --require-approval never --verbose
+            
+            
+            
+
+            
