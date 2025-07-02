@@ -23,7 +23,7 @@ export class FrontendStack extends cdk.Stack {
 
     const certificate = certificateManager.Certificate.fromCertificateArn(this, 
       "CloudShopExistingCertificate",
-      'arn:aws:acm:us-east-1:985539769349:certificate/474952eb-54ca-44bd-8532-ea1a16b744e8');
+      'arn:aws:acm:us-east-1:985539769349:certificate/d4819f64-1bd4-41f0-ab1c-0f7151dec481');
 
     const distribution = new cloudfront.Distribution(this, 'CloudFrontDistribution', {
       defaultBehavior: {
@@ -59,6 +59,6 @@ export class FrontendStack extends cdk.Stack {
       recordName: '',
       target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
     });
-    
+
   }
 }
