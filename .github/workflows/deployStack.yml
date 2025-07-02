@@ -23,6 +23,7 @@ jobs:
                 cd code
                 cd cdk
                 npm install
+                echo "${{ github.repository }}"
             
             - name: Build CDK
               run: |
