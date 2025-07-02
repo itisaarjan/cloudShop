@@ -23,25 +23,25 @@ export class PaymentStack extends  cdk.Stack{
         this.paymentRequestLambda = new lambda.NodejsFunction(this, "PaymentRequestService",{
             runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
             handler: "handler",
-            entry: path.join(__dirname, "..", "..", "services", "paymentservice","")
+            entry: path.join(__dirname, "..", "..", "services", "paymentservice","paymentRequest.ts")
         })
 
         this.paymentCheckLambda = new lambda.NodejsFunction(this, "PaymentCheckService", {
             runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
             handler: "handler",
-            entry: path.join(__dirname, "..", "..", "services", "paymentservice","")
+            entry: path.join(__dirname, "..", "..", "services", "paymentservice","paymentCheck.ts")
         });
 
         this.walletLambda = new lambda.NodejsFunction(this,"StoreInWalletService",{
             runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
             handler: "handler",
-            entry: path.join(__dirname, "..", "..", "services", "paymentservice","")
+            entry: path.join(__dirname, "..", "..", "services", "paymentservice","walletLambda.ts")
         });
 
         this.ledgerLambda = new lambda.NodejsFunction(this, "OrderLedgerRecordService",{
             runtime: cdk.aws_lambda.Runtime.NODEJS_18_X,
             handler: "handler",
-            entry: path.join(__dirname, "..", "..", "services", "paymentservice","")  
+            entry: path.join(__dirname, "..", "..", "services", "paymentservice","ledgerLambda.ts")  
         })
 
         this.walletTable = new dynamodb.Table(this, "WalletServiceTable",{
