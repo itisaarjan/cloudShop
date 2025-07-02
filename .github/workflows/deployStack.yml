@@ -35,7 +35,7 @@ jobs:
               uses: aws-actions/configure-aws-credentials@v2
               with:
                 role-to-assume: arn:aws:iam::985539769349:role/GitHubActionsOIDCDeployRole
-                aws-region: ${{secrets.AWS_REGION}}
+                aws-region: us-east-1
                         
             - name: Deploy CDK Stack
               env: 
