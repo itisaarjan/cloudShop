@@ -17,9 +17,9 @@ export class FrontendStack extends cdk.Stack {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     });
 
-    const hostedZone = route53.HostedZone.fromLookup(this, "HostedZone", {
-    domainName:'cloudshop.click'
-    })
+    const hostedZone = new route53.PublicHostedZone(this, 'HostedZone', {
+      zoneName: 'cloudshop.click',
+    });    
 
     const certificate = new certificateManager.Certificate(this, 'Certificate', {
       domainName: 'www.cloudshop.click',
