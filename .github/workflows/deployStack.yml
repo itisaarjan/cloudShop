@@ -9,6 +9,11 @@ on:
 jobs: 
     deploy:
         runs-on: ubuntu-latest
+
+        permissions:
+          id-token: write
+          contents: read
+          
         steps: 
             - name: Checkout Source
               uses: actions/checkout@v2
@@ -32,16 +37,13 @@ jobs:
                 npm run build
             
             - name: Configure AWS Credentials via OIDC
-              uses: aws-actions/configure-aws-credentials@v2
+              uses: aws-actions/configure-aws-credentials@v4
               with:
                 role-to-assume: arn:aws:iam::985539769349:role/GitHubActionsOIDCDeployRole
-                aws-region: us-east-1
-            
-            - name: Test STS identity
-              run: aws sts get-caller-identity          
+                aws-region: us-east-1         
             - name: Deploy CDK Stack
               env: 
-                AWS_REGION: ${{ secrets.AWS_REGION }}
+                aws-region: ${{ secrets.AWS_REGION }}
               run: |
                 cd code/cdk
                 npx cdk deploy --all --require-approval never --verbose
