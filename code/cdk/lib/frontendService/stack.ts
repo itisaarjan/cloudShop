@@ -17,15 +17,13 @@ export class FrontendStack extends cdk.Stack {
       blockPublicAccess: s3.BlockPublicAccess.BLOCK_ALL,
     });
 
-    const hostedZone = new route53.PublicHostedZone(this, 'HostedZone', {
-      zoneName: 'cloudshop.click',
-    });    
+    const hostedZone = route53.HostedZone.fromLookup(this, 'HostedZone', {
+      domainName: 'cloudshop.click',
+    });       
 
-    const certificate = new certificateManager.Certificate(this, 'Certificate', {
-      domainName: 'www.cloudshop.click',
-      certificateName: 'CloudShop Certificate',
-      validation: certificateManager.CertificateValidation.fromDns(hostedZone),
-    });
+    const certificate = certificateManager.Certificate.fromCertificateArn(this, 
+      "CloudShopExistingCertificate",
+      'arn:aws:acm:us-east-1:985539769349:certificate/474952eb-54ca-44bd-8532-ea1a16b744e8');
 
     const distribution = new cloudfront.Distribution(this, 'CloudFrontDistribution', {
       defaultBehavior: {
