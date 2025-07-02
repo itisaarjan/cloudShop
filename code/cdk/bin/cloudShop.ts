@@ -14,4 +14,9 @@ new OIDCStack(app,'cicdStack',{
 })
 new ProductCatalogStack(app, 'ProductCatalog');
 new PaymentStack(app, 'PaymentService');
-new FrontendStack(app, "FrontendStack");
+new FrontendStack(app, "FrontendStack",{
+  env:{
+    account: process.env.CDK_DEFAULT_ACCOUNT,
+    region: process.env.CDK_DEFAULT_REGION
+  }
+});
