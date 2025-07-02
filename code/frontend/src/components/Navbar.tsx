@@ -2,7 +2,7 @@ import Button, { ButtonType } from "./Button";
 
 function Navbar() {
   return (
-    <nav className="w-full bg-black text-white">
+    <nav className="w-full bg-black text-white fixed top-0 left-0 z-50">
       <div className="max-w-screen-xl mx-auto px-4 h-auto min-h-[8vh] flex items-center justify-between gap-4 flex-wrap py-2">
         
         

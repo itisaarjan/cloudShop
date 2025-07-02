@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import Button, { ButtonType } from "./Button";
 
 interface CardType {
   imageUrl: string;
@@ -25,6 +26,7 @@ function Card(props: CardType):ReactElement {
           <p>Quantity: {props.productQuantity}</p>
           <p>Price: ${props.productPrice}</p>
         </div>
+        <Button type={ButtonType.Secondary} value="Add to cart" />
       </div>
     </div>
   );
