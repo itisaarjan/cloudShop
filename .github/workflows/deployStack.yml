@@ -33,7 +33,7 @@ jobs:
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          role-to-assume: arn:aws:iam::985539769349:role/GitHubActionsOIDCDeployRole
+          role-to-assume: ${{secrets.OIDC_ROLE}}
           aws-region: us-east-1 
 
       - name: Deploy CDK Stack
@@ -50,4 +50,4 @@ jobs:
 
       - name: Deploy to S3
         run: |
-          aws s3 sync code/frontend/dist s3://frontendstack-cloudshopbucket31354b1f-pgx5mbmaltrx --delete
+          aws s3 sync code/frontend/dist ${{secrets.S3_NAME}} --delete
