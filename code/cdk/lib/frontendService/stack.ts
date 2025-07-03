@@ -38,13 +38,13 @@ export class FrontendStack extends cdk.Stack {
           httpStatus: 403,
           responseHttpStatus: 200,
           responsePagePath: '/index.html',
-          ttl: cdk.Duration.seconds(0),
+          ttl: cdk.Duration.seconds(3),
         },
         {
           httpStatus: 404,
           responseHttpStatus: 200,
           responsePagePath: '/index.html',
-          ttl: cdk.Duration.millis(300),
+          ttl: cdk.Duration.seconds(3),
         },
       ],
     });
