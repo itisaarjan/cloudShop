@@ -49,10 +49,5 @@ export class FrontendStack extends cdk.Stack {
       ],
     });
 
-    new route53.ARecord(this, 'ARecord', {
-      zone: hostedZone,
-      recordName: 'www',
-      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
-    });
   }
 }
