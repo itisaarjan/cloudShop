@@ -54,6 +54,5 @@ export class FrontendStack extends cdk.Stack {
       recordName: 'www',
       target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
     });
-
   }
 }
