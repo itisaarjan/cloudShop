@@ -1,54 +1,53 @@
 name: CDK deploy workflow
-# This is a basic workflow to help you get started with Actions
-# You can use this workflow to deploy your CDK application
+
 on:
-    push:
-        branches:
-            - main
+  push:
+    branches:
+      - main
 
 jobs: 
-    deploy:
-        runs-on: ubuntu-latest
+  deploy:
+    runs-on: ubuntu-latest
 
-        permissions:
-          id-token: write
-          contents: read
-          
-        steps: 
-            - name: Checkout Source
-              uses: actions/checkout@v2
+    permissions:
+      id-token: write
+      contents: read
 
-            - name: Set up Node.js
-              uses: actions/setup-node@v2
-              with:
-                node-version: '18'
-            
-            - name: Install Dependencies
-              run: |
-                cd code
-                cd cdk
-                npm install
-                echo "${{ github.repository }}"
-            
-            - name: Build CDK
-              run: |
-                cd code
-                cd cdk
-                npm run build
-            
-            - name: Configure AWS Credentials via OIDC
-              uses: aws-actions/configure-aws-credentials@v4
-              with:
-                role-to-assume: arn:aws:iam::985539769349:role/GitHubActionsOIDCDeployRole
-                aws-region: us-east-1         
-            - name: Deploy CDK Stack
-              env: 
-                aws-region: ${{ secrets.AWS_REGION }}
-              run: |
-                cd code/cdk
-                npx cdk deploy --all --require-approval never --verbose
-            
-            
-            
+    steps: 
+      - name: Checkout Source
+        uses: actions/checkout@v2
 
-            
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18'
+
+      - name: Install CDK dependencies
+        working-directory: code/cdk
+        run: npm install
+
+      - name: Build CDK
+        working-directory: code/cdk
+        run: npm run build
+
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::985539769349:role/GitHubActionsOIDCDeployRole
+          aws-region: us-east-1 
+
+      - name: Deploy CDK Stack
+        working-directory: code/cdk
+        run: npx cdk deploy --all --require-approval never --verbose
+
+      - name: Install frontend dependencies
+        working-directory: code/frontend
+        run: npm install
+
+      - name: Build frontend
+        working-directory: code/frontend
+        run: npm run build
+
+      - name: Deploy to S3
+        run: |
+          aws s3 sync code/frontend/dist s3://frontendstack-cloudshopbucket31354b1f-pgx5mbmaltrx --delete
