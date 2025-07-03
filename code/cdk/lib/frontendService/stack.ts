@@ -44,7 +44,7 @@ export class FrontendStack extends cdk.Stack {
           httpStatus: 404,
           responseHttpStatus: 200,
           responsePagePath: '/index.html',
-          ttl: cdk.Duration.seconds(0),
+          ttl: cdk.Duration.millis(300),
         },
       ],
     });
@@ -52,12 +52,6 @@ export class FrontendStack extends cdk.Stack {
     new route53.ARecord(this, 'ARecord', {
       zone: hostedZone,
       recordName: 'www',
-      target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
-    });
-
-    new route53.ARecord(this, 'RootARecord', {
-      zone: hostedZone,
-      recordName: '',
       target: route53.RecordTarget.fromAlias(new targets.CloudFrontTarget(distribution)),
     });
 
