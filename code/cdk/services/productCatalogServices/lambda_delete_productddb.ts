@@ -1,6 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DynamoDBClient, DeleteItemCommand, GetItemCommand } from '@aws-sdk/client-dynamodb';
 import { z } from 'zod/v4';
+import { withCors } from '../../lib/utils/constants';
 
 const client = new DynamoDBClient({});
 const tableName = process.env.table_name;
@@ -15,62 +16,49 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const query = querySchema.parse(event.queryStringParameters ?? {});
 
     const getCommand = new GetItemCommand({
-        TableName: tableName,
-        Key: {
-            id: {S:query.id},
-            name: {S:query.name}
-        }
-    })
+      TableName: tableName,
+      Key: {
+        id: { S: query.id },
+        name: { S: query.name }
+      }
+    });
 
     const getResult = await client.send(getCommand);
 
     if (!getResult.Item) {
-      return {
-        statusCode: 404,
-        body: JSON.stringify({
-          message: "Product not found",
-          id: query.id,
-          name: query.name
-        })
-      };
+      return withCors(404, {
+        message: "Product not found",
+        id: query.id,
+        name: query.name
+      });
     }
-
 
     const deleteCommand = new DeleteItemCommand({
       TableName: tableName,
       Key: {
         id: { S: query.id },
-        name: {S: query.name}
+        name: { S: query.name }
       }
     });
 
     await client.send(deleteCommand);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "Product deleted successfully",
-        id: query.id
-      })
-    };
+    return withCors(200, {
+      message: "Product deleted successfully",
+      id: query.id
+    });
 
   } catch (error) {
     if (error instanceof z.ZodError) {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({
-          message: "Invalid query parameters",
-          errors: error.issues
-        })
-      };
+      return withCors(400, {
+        message: "Invalid query parameters",
+        errors: error.issues
+      });
     }
 
-    return {
-      statusCode: 500,
-      body: JSON.stringify({
-        message: "Error deleting product",
-        error: String(error)
-      })
-    };
+    return withCors(500, {
+      message: "Error deleting product",
+      error: String(error)
+    });
   }
 }

@@ -1,6 +1,7 @@
 import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DynamoDBClient, GetItemCommand, PutItemCommand } from '@aws-sdk/client-dynamodb';
 import { z } from 'zod/v4';
+import { withCors } from '../../lib/utils/constants'; 
 
 const client = new DynamoDBClient({});
 const tableName = process.env.table_name;
@@ -19,10 +20,7 @@ export type Product = z.infer<typeof productSchema>;
 
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   if (!event.body) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: "Request body is required" })
-    };
+    return withCors(400, { message: "Request body is required" });
   }
 
   try {
@@ -30,25 +28,22 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const product: Product = productSchema.parse(body);
 
     const getCommand = new GetItemCommand({
-            TableName: tableName,
-            Key: {
-                id: {S:product.id},
-                name: {S:product.name}
-            }
-        })
-    
-        const getResult = await client.send(getCommand);
-    
-        if (getResult.Item) {
-          return {
-            statusCode: 404,
-            body: JSON.stringify({
-              message: "Product already exists",
-              id: product.id,
-              name: product.name
-            })
-          };
-        }
+      TableName: tableName,
+      Key: {
+        id: { S: product.id },
+        name: { S: product.name }
+      }
+    });
+
+    const getResult = await client.send(getCommand);
+
+    if (getResult.Item) {
+      return withCors(409, {
+        message: "Product already exists",
+        id: product.id,
+        name: product.name
+      });
+    }
 
     const command = new PutItemCommand({
       TableName: tableName,
@@ -66,40 +61,19 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     await client.send(command);
 
-    return {
-      statusCode: 201,
-      body: JSON.stringify({
-        message: "Product created successfully",
-        product: product
-      })
-    };
+    return withCors(201, {
+      message: "Product created successfully",
+      product: product
+    });
 
   } catch (error) {
-    if (error instanceof z.ZodError || error instanceof Error) {
-      return {
-        statusCode: 400,headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "*",
-          "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS"
-        },
-        body: JSON.stringify({
-          message: "Invalid request body",
-          errors: error instanceof z.ZodError ? error.issues : error.message
-        })
-      };
-    }
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "*",
-        "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS"
-      },
-      body: JSON.stringify({
-        message: "Internal Server Error",
-        error: String(error)
-      })
-    };
+    return withCors(400, {
+      message: "Invalid request body",
+      errors: error instanceof z.ZodError
+        ? error.issues
+        : error instanceof Error
+        ? error.message
+        : String(error)
+    });
   }
 }

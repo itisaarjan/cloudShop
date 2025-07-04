@@ -2,48 +2,43 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
 import { DynamoDBClient, GetItemCommand, UpdateItemCommand } from '@aws-sdk/client-dynamodb';
 import { z } from 'zod/v4';
 import { productSchema, Product } from './lambda_post_productddb';
+import { withCors } from '../../lib/utils/constants';
 
 const client = new DynamoDBClient({});
 const tableName = process.env.table_name;
 
-
-
 export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> {
   if (!event.body) {
-    return {
-      statusCode: 400,
-      body: JSON.stringify({ message: "Request body is required" })
-    };
+    return withCors(400, { message: "Request body is required" });
   }
 
   try {
     const body = JSON.parse(event.body);
     const product: Product = productSchema.parse(body);
+
     const getCommand = new GetItemCommand({
-            TableName: tableName,
-            Key: {
-                id: {S:product.id},
-                name: {S:product.name}
-            }
-        })
-    
-        const getResult = await client.send(getCommand);
-    
-        if (!getResult.Item) {
-          return {
-            statusCode: 404,
-            body: JSON.stringify({
-              message: "Product not found",
-              id: product.id,
-              name: product.name
-            })
-          };
-        }
+      TableName: tableName,
+      Key: {
+        id: { S: product.id },
+        name: { S: product.name }
+      }
+    });
+
+    const getResult = await client.send(getCommand);
+
+    if (!getResult.Item) {
+      return withCors(404, {
+        message: "Product not found",
+        id: product.id,
+        name: product.name
+      });
+    }
+
     const command = new UpdateItemCommand({
       TableName: tableName,
       Key: {
         id: { S: product.id },
-        name: {S: product.name}
+        name: { S: product.name }
       },
       UpdateExpression: `
         SET #description = :description,
@@ -71,41 +66,15 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     const result = await client.send(command);
 
-    return {
-      statusCode: 200,
-      body: JSON.stringify({
-        message: "Product updated successfully",
-        product: result.Attributes
-      })
-    };
+    return withCors(200, {
+      message: "Product updated successfully",
+      product: result.Attributes
+    });
 
   } catch (error) {
-    if (error instanceof z.ZodError || error instanceof Error) {
-      return {
-        statusCode: 400,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Headers": "*",
-          "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS"
-        },
-        body: JSON.stringify({
-          message: "Invalid request body",
-          errors: error instanceof z.ZodError ? error.issues : error.message
-        })
-      };
-    }
-
-    return {
-      statusCode: 500,
-      headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Headers": "*",
-        "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS"
-      },
-      body: JSON.stringify({
-        message: "Internal Server Error",
-        error: String(error)
-      })
-    };
+    return withCors(400, {
+      message: "Invalid request body",
+      errors: error instanceof z.ZodError ? error.issues : error instanceof Error ? error.message : String(error)
+    });
   }
 }
