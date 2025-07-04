@@ -6,9 +6,9 @@ import { Navbar } from './components/Navbar';
 
 function App() {
   return (
-    <div className='bg-[#f3f4f6] w-[100vw] h-[100vh] flex flex-col items-center '>
-      <Navbar/>
-      <Body/>
+    <div className='bg-[#f3f4f6] min-h-screen w-full flex flex-col items-center'>
+      <Navbar />
+      <Body />
     </div>
   )
 }

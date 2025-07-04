@@ -43,19 +43,19 @@ function Body() {
 
   return (
     <div className="w-full px-4 py-8 flex justify-center">
-      <div className="w-full max-w-sm">
-        {products.map((product) => (
-          <Card
-            key={product.id}
-            imageUrl={product.imageUrl}
-            productName={product.name}
-            productDescription={product.description}
-            productQuantity={product.stock.toString()}
-            productPrice={`$${product.price.toFixed(2)}`}
-          />
-        ))}
-      </div>
-    </div>
+  <div className="w-full max-w-7xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    {products.map((product) => (
+      <Card
+        key={product.id}
+        imageUrl={product.imageUrl}
+        productName={product.name}
+        productDescription={product.description}
+        productQuantity={product.stock.toString()}
+        productPrice={`$${product.price.toFixed(2)}`}
+      />
+    ))}
+  </div>
+</div>
   );
 }
 
