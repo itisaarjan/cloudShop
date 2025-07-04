@@ -92,7 +92,7 @@ export class ProductCatalogStack extends cdk.Stack {
 
    table.grantReadData(lambdaGetProduct);
    table.grantReadData(lambdaGetAllProducts);
-   table.grantWriteData(lambdaPostProduct);
+   table.grantReadWriteData(lambdaPostProduct);
    table.grantReadWriteData(lambdaDeleteProduct);
    table.grantReadWriteData(lambdaUpdateProduct);
 
