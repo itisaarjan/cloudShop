@@ -96,7 +96,13 @@ export class ProductCatalogStack extends cdk.Stack {
    table.grantReadWriteData(lambdaDeleteProduct);
    table.grantReadWriteData(lambdaUpdateProduct);
 
-   const api = new apigateway.RestApi(this, "Products");
+   const api = new apigateway.RestApi(this, "Products",{
+    defaultCorsPreflightOptions: {
+      allowOrigins: ['*'],
+      allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+      allowHeaders: ['*'],
+    },
+   });
    const v1 = api.root.addResource("v1");
    const products = v1.addResource("products");
    const productId = products.addResource("{id}");

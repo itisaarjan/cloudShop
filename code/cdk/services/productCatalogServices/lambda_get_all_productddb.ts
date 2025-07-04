@@ -45,6 +45,11 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "*",
+        "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS"
+      },
       body: JSON.stringify({
         items: result.Items,
         nextPageToken: result.LastEvaluatedKey
@@ -56,6 +61,11 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     if (error instanceof z.ZodError || error instanceof Error) {
       return {
         statusCode: 400,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Headers": "*",
+          "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS"
+        },
         body: JSON.stringify({
           message: "Invalid query parameters",
           errors: error instanceof z.ZodError ? error.issues : error.message
