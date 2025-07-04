@@ -29,7 +29,16 @@ export class ProductCatalogStack extends cdk.Stack {
      billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
      replicationRegions: ["us-west-1","us-west-2"],
     
-   })
+   });
+   
+   table.addGlobalSecondaryIndex({
+    contributorInsightsEnabled:  true,
+    indexName: 'Name',
+    partitionKey:{
+      name: 'name',
+      type: dynamodb.AttributeType.STRING,
+    }
+   });
 
    const lambdaGetProduct = new lambda.NodejsFunction(this, 'lambdaGetProduct', {
      functionName:"lambdaGetProduct",
