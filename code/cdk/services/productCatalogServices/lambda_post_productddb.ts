@@ -39,11 +39,11 @@ export async function handler(event: APIGatewayProxyEvent): Promise<APIGatewayPr
     
         const getResult = await client.send(getCommand);
     
-        if (!getResult.Item) {
+        if (getResult.Item) {
           return {
             statusCode: 404,
             body: JSON.stringify({
-              message: "Product not found",
+              message: "Product already exists",
               id: product.id,
               name: product.name
             })
