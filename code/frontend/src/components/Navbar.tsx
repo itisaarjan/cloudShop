@@ -1,4 +1,3 @@
-import { useState } from "react";
 import Button, { ButtonType } from "./Button";
 import { ShoppingCartIcon } from "./ShoppingCartIcon";
 import { Menu, X } from "lucide-react";
