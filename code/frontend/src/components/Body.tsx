@@ -60,7 +60,7 @@ function Body() {
         productName={product.name}
         productDescription={product.description}
         productQuantity={product.stock.toString()}
-        productPrice={`$${product.price.toFixed(2)}`}
+        productPrice={Number(product.price.toFixed(2))}
       />
     ))}
   </div>

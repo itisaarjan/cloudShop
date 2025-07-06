@@ -10,7 +10,7 @@ interface CardType {
   productName: string;
   productDescription: string;
   productQuantity: string;
-  productPrice: string;
+  productPrice: number;
   productCategory: string,
   productId: string
 }
@@ -42,7 +42,7 @@ function Card(props: CardType):ReactElement {
             category:props.productCategory,
             price: Number(props.productPrice),
             id:props.productId,
-            quantity: Number(props.productQuantity)
+            quantity: Number(1),
           }));
           console.log(customerCartProductState);
         }} />

@@ -9,8 +9,6 @@ import { useDispatch } from "react-redux";
 import { closeCart, openCart, toggleCart } from "../store/slices/showCart";
 
 function Navbar() {
-  const [isOpen, setIsOpen] = useState(false);
-  
   const showCartStatus = useSelector((state:RootState)=>state.showCart);
   const dispatch = useDispatch();
 
@@ -54,7 +52,7 @@ function Navbar() {
           </div>
         </div>
 
-        {isOpen && (
+        {showCartStatus && (
           <div className="md:hidden flex flex-col items-end gap-2 px-4 pb-4">
             <Button value="Sign Up" type={ButtonType.Secondary} />
             <Button value="Log in" type={ButtonType.Secondary} />

@@ -1,6 +1,7 @@
 import { useSelector } from "react-redux";
 import type { RootState } from "../store/Store";
 import { useDispatch } from "react-redux";
+import { removeCartProduct } from "../store/slices/CustomerCart";
 
 interface CartProps {
   onClose: () => void;
@@ -10,6 +11,9 @@ function Cart({ onClose }: CartProps) {
 
   const customerCartProducts = useSelector( (state:RootState)=>state.customerCartProduct.value);
   const dispatch = useDispatch();
+  const totalPrice = useSelector((state:RootState): number => {
+    return state.customerCartProduct.value.reduce((total,product)=>total+product.price*product.quantity,0);
+  })
 
 
   return (
@@ -79,6 +83,9 @@ function Cart({ onClose }: CartProps) {
                                 <button
                                   type="button"
                                   className="font-medium text-indigo-600 hover:text-indigo-500"
+                                  onClick={()=>{
+                                    dispatch(removeCartProduct(product.id));
+                                  }}
                                 >
                                   Remove
                                 </button>
@@ -95,7 +102,7 @@ function Cart({ onClose }: CartProps) {
                 <div className="border-t border-gray-200 px-4 py-6 sm:px-6">
                   <div className="flex justify-between text-base font-medium text-gray-900">
                     <p>Subtotal</p>
-                    <p>$122.00</p>
+                    <p>${totalPrice}</p>
                   </div>
                   <p className="mt-0.5 text-sm text-gray-500">
                     Shipping and taxes calculated at checkout.
