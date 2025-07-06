@@ -3,14 +3,16 @@ import Button, { ButtonType } from "./Button";
 import { ShoppingCartIcon } from "./ShoppingCartIcon";
 import { Menu, X } from "lucide-react";
 import Cart from "./Cart";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/Store";
+import { useDispatch } from "react-redux";
+import { closeCart, openCart, toggleCart } from "../store/slices/showCart";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const [showCart, setShowCart] = useState(false);
-
-  const toggleNavbar = () => {
-    setIsOpen(!isOpen);
-  };
+  
+  const showCartStatus = useSelector((state:RootState)=>state.showCart);
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -21,8 +23,8 @@ function Navbar() {
               <a href="https://www.cloudshop.click">CloudShop</a>
             </div>
             <div className="md:hidden">
-              <button onClick={toggleNavbar}>
-                {isOpen ? <X /> : <Menu />}
+            <button onClick={() => dispatch(toggleCart())}> 
+                {showCartStatus.valueOf() ? <X /> : <Menu />}
               </button>
             </div>
           </div>
@@ -46,7 +48,7 @@ function Navbar() {
           <div className="hidden md:flex items-center gap-4">
             <Button value="Sign Up" type={ButtonType.Secondary} />
             <Button value="Log in" type={ButtonType.Secondary} />
-            <button onClick={() => setShowCart(true)} className="p-2">
+            <button onClick={() => dispatch(openCart())} className="p-2">
               <ShoppingCartIcon />
             </button>
           </div>
@@ -56,14 +58,14 @@ function Navbar() {
           <div className="md:hidden flex flex-col items-end gap-2 px-4 pb-4">
             <Button value="Sign Up" type={ButtonType.Secondary} />
             <Button value="Log in" type={ButtonType.Secondary} />
-            <button onClick={() => setShowCart(true)} className="p-2">
+            <button onClick={() => dispatch(openCart())} className="p-2">
               <ShoppingCartIcon />
             </button>
           </div>
         )}
       </nav>
 
-      {showCart && <Cart onClose={() => setShowCart(false)} />}
+      {showCartStatus && <Cart onClose={() => dispatch(closeCart())} />}
     </>
   );
 }

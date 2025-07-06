@@ -1,8 +1,17 @@
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/Store";
+import { useDispatch } from "react-redux";
+
 interface CartProps {
   onClose: () => void;
 }
 
 function Cart({ onClose }: CartProps) {
+
+  const customerCartProducts = useSelector( (state:RootState)=>state.customerCartProduct.value);
+  const dispatch = useDispatch();
+
+
   return (
     <div
       className="relative z-10"
@@ -47,24 +56,25 @@ function Cart({ onClose }: CartProps) {
                   <div className="mt-8">
                     <div className="flow-root">
                       <ul role="list" className="-my-6 divide-y divide-gray-200">
-                        <li className="flex py-6">
+                      {customerCartProducts.map((product) => (
+                        <li key={product.id} className="flex py-6">
                           <div className="h-24 w-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
                             <img
-                              src="https://tailwindcss.com/plus-assets/img/ecommerce-images/shopping-cart-page-04-product-01.jpg"
-                              alt="Throwback Hip Bag"
+                              src={product.imageUrl}
+                              alt={product.name}
                               className="h-full w-full object-cover"
                             />
                           </div>
                           <div className="ml-4 flex flex-1 flex-col">
                             <div>
                               <div className="flex justify-between text-base font-medium text-gray-900">
-                                <h3>Throwback Hip Bag</h3>
-                                <p className="ml-4">$90.00</p>
+                                <h3>{product.category}</h3>
+                                <p className="ml-4">${product.price.toFixed(2)}</p>
                               </div>
-                              <p className="mt-1 text-sm text-gray-500">Salmon</p>
+                              <p className="mt-1 text-sm text-gray-500">{product.category}</p>
                             </div>
                             <div className="flex flex-1 items-end justify-between text-sm">
-                              <p className="text-gray-500">Qty 1</p>
+                              <p className="text-gray-500">Qty {product.quantity}</p>
                               <div className="flex">
                                 <button
                                   type="button"
@@ -76,36 +86,7 @@ function Cart({ onClose }: CartProps) {
                             </div>
                           </div>
                         </li>
-
-                        <li className="flex py-6">
-                          <div className="h-24 w-24 shrink-0 overflow-hidden rounded-md border border-gray-200">
-                            <img
-                              src="https://tailwindcss.com/plus-assets/img/ecommerce-images/shopping-cart-page-04-product-02.jpg"
-                              alt="Medium Stuff Satchel"
-                              className="h-full w-full object-cover"
-                            />
-                          </div>
-                          <div className="ml-4 flex flex-1 flex-col">
-                            <div>
-                              <div className="flex justify-between text-base font-medium text-gray-900">
-                                <h3>Medium Stuff Satchel</h3>
-                                <p className="ml-4">$32.00</p>
-                              </div>
-                              <p className="mt-1 text-sm text-gray-500">Blue</p>
-                            </div>
-                            <div className="flex flex-1 items-end justify-between text-sm">
-                              <p className="text-gray-500">Qty 1</p>
-                              <div className="flex">
-                                <button
-                                  type="button"
-                                  className="font-medium text-indigo-600 hover:text-indigo-500"
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            </div>
-                          </div>
-                        </li>
+                      ))}
                       </ul>
                     </div>
                   </div>

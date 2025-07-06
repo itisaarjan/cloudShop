@@ -16,8 +16,9 @@ function Button(props: ButtonProps) {
       : "bg-white text-black border border-black hover:text-white hover:bg-black";
 
   return (
-    <button className={`${bgColor} font-bold py-2 px-4 rounded-full w-[40vw] md:w-[8vw]`}>
+    <button className={`${bgColor} font-bold py-2 px-4 rounded-full w-[40vw] md:w-[8vw]`} onClick={props.onClick}>
         {props.value}
+
   </button>
   );
 }

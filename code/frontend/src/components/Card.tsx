@@ -1,5 +1,9 @@
 import type { ReactElement } from "react";
 import Button, { ButtonType } from "./Button";
+import { useSelector } from "react-redux";
+import type { RootState } from "../store/Store";
+import { useDispatch } from "react-redux";
+import { addCartProduct } from "../store/slices/CustomerCart";
 
 interface CardType {
   imageUrl: string;
@@ -7,9 +11,14 @@ interface CardType {
   productDescription: string;
   productQuantity: string;
   productPrice: string;
+  productCategory: string,
+  productId: string
 }
 
 function Card(props: CardType):ReactElement {
+  const customerCartProductState = useSelector((state:RootState) => state.customerCartProduct.value);
+  const dispatch = useDispatch();
+
   return (
     <div className="w-72 h-[30rem] bg-white rounded-xl shadow-md overflow-hidden flex flex-col">
       <img
@@ -26,7 +35,17 @@ function Card(props: CardType):ReactElement {
           <p>Quantity: {props.productQuantity}</p>
           <p>Price: ${props.productPrice}</p>
         </div>
-        <Button type={ButtonType.Secondary} value="Add to cart" />
+        <Button type={ButtonType.Secondary} value="Add to cart" onClick={()=>{
+          dispatch(addCartProduct({
+            imageUrl: props.imageUrl,
+            name: props.productName,
+            category:props.productCategory,
+            price: Number(props.productPrice),
+            id:props.productId,
+            quantity: Number(props.productQuantity)
+          }));
+          console.log(customerCartProductState);
+        }} />
       </div>
     </div>
   );
