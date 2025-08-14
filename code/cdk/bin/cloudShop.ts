@@ -4,6 +4,7 @@ import { ProductCatalogStack } from '../lib/productCatalog/stack';
 import { OIDCStack } from '../lib/CICD/githubOIDC';
 import { PaymentStack } from '../lib/paymentService/stack';
 import { FrontendStack } from '../lib/frontendService/stack';
+import { CognitoStack } from '../lib/cognito/Cognito';
 
 const app = new cdk.App();
 new OIDCStack(app,'cicdStack',{
@@ -20,3 +21,4 @@ new FrontendStack(app, "FrontendStack",{
     region: process.env.CDK_DEFAULT_REGION
   }
 });
+new CognitoStack(app, "AuthenticationService");

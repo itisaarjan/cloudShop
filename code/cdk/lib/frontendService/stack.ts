@@ -48,6 +48,5 @@ export class FrontendStack extends cdk.Stack {
         },
       ],
     });
-
   }
 }
