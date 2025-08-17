@@ -12,7 +12,7 @@ export class CognitoStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    // --- API GATEWAY (REST) ---
+    const browserCallbackUrl = "https://www.cloudshop.click/auth/callback";
     const api = new apigw.RestApi(this, "AuthApi", {
       restApiName: "CloudShopAuthApi",
       defaultCorsPreflightOptions: {
@@ -52,7 +52,7 @@ export class CognitoStack extends cdk.Stack {
     });
 
     // --- COGNITO APP CLIENT ---
-    const apiCallbackUrl = `${api.url}auth/callback`;
+
 
     const webClient = new cognito.UserPoolClient(this, "CloudShopWebClient", {
       userPool,
@@ -69,7 +69,7 @@ export class CognitoStack extends cdk.Stack {
         ],
         callbackUrls: [
           "https://www.cloudshop.click/",
-          apiCallbackUrl, // <-- API callback whitelisted
+          browserCallbackUrl, // <-- API callback whitelisted
           // "http://localhost:5173/callback", // (optional for local dev)
         ],
         logoutUrls: ["https://www.cloudshop.click/"],
@@ -97,7 +97,7 @@ export class CognitoStack extends cdk.Stack {
         `${domain.baseUrl()}/login?` +
         `client_id=${webClient.userPoolClientId}` +
         `&response_type=code&scope=openid+email+profile` +
-        `&redirect_uri=${encodeURIComponent(apiCallbackUrl)}`,
+        `&redirect_uri=${encodeURIComponent(browserCallbackUrl)}`,
     });
 
     const clientSecret = new secrets.Secret(this, "CognitoClientSecret", {
@@ -128,7 +128,7 @@ export class CognitoStack extends cdk.Stack {
         USER_POOL_DOMAIN: domain.baseUrl().replace(/\/$/, ""),
         CLIENT_ID: webClient.userPoolClientId,
         CLIENT_SECRET_ARN: clientSecret.secretArn,
-        REDIRECT_URI: apiCallbackUrl, // <-- aligned with Cognito client
+        REDIRECT_URI: browserCallbackUrl, // <-- aligned with Cognito client
         TABLE_NAME: table.tableName,
         COOKIE_DOMAIN: ".cloudshop.click",
         COOKIE_SECURE: "true",
@@ -148,7 +148,7 @@ export class CognitoStack extends cdk.Stack {
     callback.addMethod("GET", new apigw.LambdaIntegration(callbackFn));
 
     new cdk.CfnOutput(this, "AuthCallbackUrl", {
-      value: apiCallbackUrl,
+      value: browserCallbackUrl,
     });
   }
 }
