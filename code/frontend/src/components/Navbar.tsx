@@ -2,44 +2,36 @@ import Button, { ButtonType } from "./Button";
 import { ShoppingCartIcon } from "./ShoppingCartIcon";
 import { Menu, X } from "lucide-react";
 import Cart from "./Cart";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import type { RootState } from "../store/Store";
-import { useDispatch } from "react-redux";
 import { closeCart, openCart, toggleCart } from "../store/slices/showCart";
-import { useAuth } from "react-oidc-context";
 
 function Navbar() {
-  const showCartStatus = useSelector((state:RootState)=>state.showCart);
+  const isCartOpen = useSelector((state: RootState) => state.showCart); // boolean
   const dispatch = useDispatch();
-  const auth = useAuth();
 
-  const signOutRedirect = () => {
-    const clientId = import.meta.env.VITE_CLIENT_ID;
-    const logOutUri = "https://www.cloudshop.click/";
-    const cognitoDomain = "https://cloudshop.auth.us-east-1.amazoncognito.com";
-    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logOutUri)}`;
-  }
+  const cognitoDomain = "https://cloudshop.auth.us-east-1.amazoncognito.com";
+  const clientId = import.meta.env.VITE_CLIENT_ID as string;
+  const callbackUri = "https://www.cloudshop.click/auth/callback";
+  const homeUri = "https://www.cloudshop.click/";
 
-  if (auth.isLoading) {
-    return <div>Loading...</div>;
-  }
+  const loginRedirect = () => {
+    const url =
+      `${cognitoDomain}/login` +
+      `?client_id=${encodeURIComponent(clientId)}` +
+      `&response_type=code` +
+      `&scope=${encodeURIComponent("openid email profile")}` +
+      `&redirect_uri=${encodeURIComponent(callbackUri)}`;
+    window.location.href = url;
+  };
 
-  if (auth.error) {
-    return <div>Encountering error... {auth.error.message}</div>;
-  }
-
-  if (auth.isAuthenticated) {
-    return (
-      <div>
-        <pre> Hello: {auth.user?.profile.email} </pre>
-        <pre> ID Token: {auth.user?.id_token} </pre>
-        <pre> Access Token: {auth.user?.access_token} </pre>
-        <pre> Refresh Token: {auth.user?.refresh_token} </pre>
-
-        <button onClick={() => auth.removeUser()}>Sign out</button>
-      </div>
-    );
-  }
+  const logoutRedirect = () => {
+    const url =
+      `${cognitoDomain}/logout` +
+      `?client_id=${encodeURIComponent(clientId)}` +
+      `&logout_uri=${encodeURIComponent(homeUri)}`;
+    window.location.href = url;
+  };
 
   return (
     <>
@@ -47,11 +39,11 @@ function Navbar() {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between px-4 md:px-8 py-3 gap-3">
           <div className="flex items-center justify-between w-full md:w-auto">
             <div className="text-lg font-bold">
-              <a href="https://www.cloudshop.click">CloudShop</a>
+              <a href={homeUri}>CloudShop</a>
             </div>
             <div className="md:hidden">
-            <button onClick={() => dispatch(toggleCart())}> 
-                {showCartStatus.valueOf() ? <X /> : <Menu />}
+              <button onClick={() => dispatch(toggleCart())}>
+                {isCartOpen ? <X /> : <Menu />}
               </button>
             </div>
           </div>
@@ -73,26 +65,28 @@ function Navbar() {
           </form>
 
           <div className="hidden md:flex items-center gap-4">
-            <Button value="Sign Up" type={ButtonType.Secondary} onClick={()=> auth.signinRedirect()} />
-            <Button value="Log in" type={ButtonType.Secondary} onClick={() => auth.signinRedirect()}/>
+            <Button value="Sign Up" type={ButtonType.Secondary} onClick={loginRedirect} />
+            <Button value="Log in" type={ButtonType.Secondary} onClick={loginRedirect} />
             <button onClick={() => dispatch(openCart())} className="p-2">
               <ShoppingCartIcon />
             </button>
+            <Button value="Log out" type={ButtonType.Secondary} onClick={logoutRedirect} />
           </div>
         </div>
 
-        {showCartStatus && (
+        {isCartOpen && (
           <div className="md:hidden flex flex-col items-end gap-2 px-4 pb-4">
-            <Button value="Sign Up" type={ButtonType.Secondary} onClick={()=> auth.signinRedirect()}/>
-            <Button value="Log in" type={ButtonType.Secondary} onClick={()=> auth.signinRedirect()}/>
+            <Button value="Sign Up" type={ButtonType.Secondary} onClick={loginRedirect} />
+            <Button value="Log in" type={ButtonType.Secondary} onClick={loginRedirect} />
             <button onClick={() => dispatch(openCart())} className="p-2">
               <ShoppingCartIcon />
             </button>
+            <Button value="Log out" type={ButtonType.Secondary} onClick={logoutRedirect} />
           </div>
         )}
       </nav>
 
-      {showCartStatus && <Cart onClose={() => dispatch(closeCart())} />}
+      {isCartOpen && <Cart onClose={() => dispatch(closeCart())} />}
     </>
   );
 }
