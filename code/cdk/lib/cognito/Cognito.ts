@@ -4,6 +4,7 @@ import * as lambda from "aws-cdk-lib/aws-lambda";
 import * as dynamodb from "aws-cdk-lib/aws-dynamodb";
 import * as apigw from "aws-cdk-lib/aws-apigateway";
 import * as node from "aws-cdk-lib/aws-lambda-nodejs";
+import * as secrets from "aws-cdk-lib/aws-secretsmanager";
 import { Construct } from "constructs";
 import path from "path";
 
@@ -99,6 +100,10 @@ export class CognitoStack extends cdk.Stack {
         `&redirect_uri=${encodeURIComponent(apiCallbackUrl)}`,
     });
 
+    const clientSecret = new secrets.Secret(this, "CognitoClientSecret", {
+      secretStringValue: webClient.userPoolClientSecret!,
+    });
+
     // --- DYNAMODB SESSIONS ---
     const table = new dynamodb.Table(this, "UserSessionTable", {
       partitionKey: { name: "sid", type: dynamodb.AttributeType.STRING },
@@ -122,7 +127,7 @@ export class CognitoStack extends cdk.Stack {
       environment: {
         USER_POOL_DOMAIN: domain.baseUrl().replace(/\/$/, ""),
         CLIENT_ID: webClient.userPoolClientId,
-        CLIENT_SECRET: webClient.userPoolClientSecret?.toString() ?? "",
+        CLIENT_SECRET_ARN: clientSecret.secretArn,
         REDIRECT_URI: apiCallbackUrl, // <-- aligned with Cognito client
         TABLE_NAME: table.tableName,
         COOKIE_DOMAIN: ".cloudshop.click",
@@ -137,6 +142,7 @@ export class CognitoStack extends cdk.Stack {
     });
 
     table.grantWriteData(callbackFn);
+    clientSecret.grantRead(callbackFn);
 
     // --- API ROUTE INTEGRATION ---
     callback.addMethod("GET", new apigw.LambdaIntegration(callbackFn));
