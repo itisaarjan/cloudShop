@@ -6,10 +6,40 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../store/Store";
 import { useDispatch } from "react-redux";
 import { closeCart, openCart, toggleCart } from "../store/slices/showCart";
+import { useAuth } from "react-oidc-context";
 
 function Navbar() {
   const showCartStatus = useSelector((state:RootState)=>state.showCart);
   const dispatch = useDispatch();
+  const auth = useAuth();
+
+  const signOutRedirect = () => {
+    const clientId = import.meta.env.VITE_CLIENT_ID;
+    const logOutUri = "https://www.cloudshop.click/";
+    const cognitoDomain = "https://cloudshop.auth.us-east-1.amazoncognito.com";
+    window.location.href = `${cognitoDomain}/logout?client_id=${clientId}&logout_uri=${encodeURIComponent(logOutUri)}`;
+  }
+
+  if (auth.isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (auth.error) {
+    return <div>Encountering error... {auth.error.message}</div>;
+  }
+
+  if (auth.isAuthenticated) {
+    return (
+      <div>
+        <pre> Hello: {auth.user?.profile.email} </pre>
+        <pre> ID Token: {auth.user?.id_token} </pre>
+        <pre> Access Token: {auth.user?.access_token} </pre>
+        <pre> Refresh Token: {auth.user?.refresh_token} </pre>
+
+        <button onClick={() => auth.removeUser()}>Sign out</button>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -43,8 +73,8 @@ function Navbar() {
           </form>
 
           <div className="hidden md:flex items-center gap-4">
-            <Button value="Sign Up" type={ButtonType.Secondary} />
-            <Button value="Log in" type={ButtonType.Secondary} />
+            <Button value="Sign Up" type={ButtonType.Secondary} onClick={()=> auth.signinRedirect()} />
+            <Button value="Log in" type={ButtonType.Secondary} onClick={() => auth.signinRedirect()}/>
             <button onClick={() => dispatch(openCart())} className="p-2">
               <ShoppingCartIcon />
             </button>
@@ -53,8 +83,8 @@ function Navbar() {
 
         {showCartStatus && (
           <div className="md:hidden flex flex-col items-end gap-2 px-4 pb-4">
-            <Button value="Sign Up" type={ButtonType.Secondary} />
-            <Button value="Log in" type={ButtonType.Secondary} />
+            <Button value="Sign Up" type={ButtonType.Secondary} onClick={()=> auth.signinRedirect()}/>
+            <Button value="Log in" type={ButtonType.Secondary} onClick={()=> auth.signinRedirect()}/>
             <button onClick={() => dispatch(openCart())} className="p-2">
               <ShoppingCartIcon />
             </button>

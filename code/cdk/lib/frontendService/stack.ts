@@ -5,8 +5,6 @@ import * as route53 from 'aws-cdk-lib/aws-route53';
 import * as certificateManager from 'aws-cdk-lib/aws-certificatemanager';
 import * as cloudfront from 'aws-cdk-lib/aws-cloudfront';
 import * as origins from 'aws-cdk-lib/aws-cloudfront-origins';
-import * as targets from 'aws-cdk-lib/aws-route53-targets';
-import { S3Bucket } from 'aws-cdk-lib/aws-kinesisfirehose';
 
 export class FrontendStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {

@@ -40,10 +40,17 @@ jobs:
         working-directory: code/cdk
         run: npx cdk deploy --all --require-approval never --verbose
 
+      - name: Create .env.production
+        working-directory: code/frontend/
+        run: |
+         cat > env.production << EOF
+         VITE_COGNITO_AUTHORITY=${{secrets.VITE_COGNITO_AUTHORITY}}
+         VITE_CLIENT_ID=${{secrets.VITE_CLIENT_ID}}
+         EOF
+         
       - name: Install frontend dependencies
         working-directory: code/frontend
         run: npm install
-
       - name: Build frontend
         working-directory: code/frontend
         run: npm run build
