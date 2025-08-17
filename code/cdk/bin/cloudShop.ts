@@ -21,4 +21,4 @@ new FrontendStack(app, "FrontendStack",{
     region: process.env.CDK_DEFAULT_REGION
   }
 });
-new CognitoStack(app, "AuthenticationService");
+// new CognitoStack(app, "AuthenticationService");
