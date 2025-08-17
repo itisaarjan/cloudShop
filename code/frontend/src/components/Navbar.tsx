@@ -9,7 +9,7 @@ import { closeCart, openCart, toggleCart } from "../store/slices/showCart";
 function Navbar() {
   const isCartOpen = useSelector((state: RootState) => state.showCart); // boolean
   const dispatch = useDispatch();
-
+  
   const cognitoDomain = "https://cloudshop.auth.us-east-1.amazoncognito.com";
   const clientId = import.meta.env.VITE_CLIENT_ID as string;
   const callbackUri = "https://www.cloudshop.click/auth/callback";
